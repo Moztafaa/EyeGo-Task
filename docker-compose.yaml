@@ -56,7 +56,7 @@ services:
   # 4. Worker (Consumer)
   worker:
     build: .
-    command: node consumer.js
+    command: node worker.js
     environment:
       - KAFKA_BROKERS=kafka:29092
       - DB_CONNECTION_STRING=mongodb://mongodb:27017/eyego-activity-logs

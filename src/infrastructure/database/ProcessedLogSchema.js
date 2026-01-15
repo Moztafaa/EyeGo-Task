@@ -1,4 +1,3 @@
-// mongoose schema for processed logs have: lever, message, timestamp, source
 import mongoose from "mongoose";
 
 const ProcessedLogSchema = new mongoose.Schema({
