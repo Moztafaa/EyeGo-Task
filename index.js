@@ -64,10 +64,43 @@ app.post("/test-log", async (req, res) => {
 
 // GET /test-log: Fetches all logs from MongoDB.
 app.get("/test-log", async (req, res) => {
+  // try {
+  //   const logs = await ProcessedLog.find();
+  //   res.status(200).json(logs);
+  // } catch (error) {
+  //   res.status(500).json({ error: "Failed to fetch logs" });
+  // }
   try {
-    const logs = await ProcessedLog.find();
-    res.status(200).json(logs);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // build the filter object
+    const filter = {};
+    if (req.query.level) {
+      filter.level = req.query.level;
+    }
+    if (req.query.source) {
+      filter.source = req.query.source;
+    }
+
+    const logs = await ProcessedLog.find(filter)
+      .sort({ timestamp: -1 }) // sort by timestamp descending
+      .skip(skip)
+      .limit(limit);
+
+    const total = await ProcessedLog.countDocuments(filter);
+
+    res.status(200).json({
+      status: "success",
+      results: logs.length,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+      data: logs,
+    });
   } catch (error) {
+    console.error("Failed to fetch logs:", error);
     res.status(500).json({ error: "Failed to fetch logs" });
   }
 });
