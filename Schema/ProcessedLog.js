@@ -5,6 +5,7 @@ const ProcessedLogSchema = new mongoose.Schema({
   level: {
     type: String,
     required: true,
+    index: true,
   },
   message: {
     type: String,
@@ -14,12 +15,17 @@ const ProcessedLogSchema = new mongoose.Schema({
     type: Date,
     required: true,
     default: Date.now,
+    index: true,
   },
   source: {
     type: String,
     required: true,
+    index: true,
   },
 });
+
+// Compound index for level and source
+ProcessedLogSchema.index({ level: 1, source: 1 });
 
 const ProcessedLog = mongoose.model("ProcessedLog", ProcessedLogSchema);
 
